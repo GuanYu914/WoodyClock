@@ -42,8 +42,8 @@ build: $(TARGET).hex
 info:
 	$(AVRDUDE) -p $(MCU) -c $(PROGRAMMER) 
 
-# when you use programmer to program avr device, this feature doesn't work anymore.
 # ignore arduino optimal bootloader
+# use this feature, then you can use whole flash program memory
 dis_bootloader:
 	$(AVRDUDE) -p $(MCU) -c $(PROGRAMMER) -U hfuse:w:0xdf:m
 
