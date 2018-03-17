@@ -24,7 +24,7 @@ HEADERS = $(SOURCES:.c=.h)
 # compilation options
 CFLAGS = -std=c99 -Wall -g -Os -mmcu=$(MCU) -DF_CPU=$(F_CPU) -I.
 
-.PHONY: build flash clean
+.PHONY: build flash clean info dis_bootloader en_bootloader
 
 all: build flash
 
@@ -38,6 +38,18 @@ $(TARGET).elf: $(OBJECTS)
 	$(CC) $(CFLAGS) -c $< 
 
 build: $(TARGET).hex 
+
+info:
+	$(AVRDUDE) -p $(MCU) -c $(PROGRAMMER) 
+
+# when you use programmer to program avr device, this feature doesn't work anymore.
+# ignore arduino optimal bootloader
+dis_bootloader:
+	$(AVRDUDE) -p $(MCU) -c $(PROGRAMMER) -U hfuse:w:0xdf:m
+
+# enable arduino optimal bootloader
+en_bootloader:
+	$(AVRDUDE) -p $(MCU) -c $(PROGRAMMER) -U hfuse:w:0xde:m
 
 flash:
 	$(AVRDUDE) -p $(MCU) -c $(PROGRAMMER) -U flash:w:$(TARGET).hex:i 
