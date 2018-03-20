@@ -1,7 +1,6 @@
 MCU   = atmega328p
 # UL -> unsigned long
 F_CPU = 16000000UL 
-BAUD  = 19200UL
 
 PROGRAMMER_TYPE = usbasp
 
@@ -19,7 +18,6 @@ TARGET = $(lastword $(subst /, ,$(CURDIR)))
 # find all .c/.h files in current dirctory
 SOURCES = $(wildcard *.c $(LIBDIR)/*.c)
 OBJECTS = $(SOURCES:.c=.o)
-HEADERS = $(SOURCES:.c=.h)
 
 # compilation options
 CFLAGS = -std=c99 -Wall -g -Os -mmcu=$(MCU) -DF_CPU=$(F_CPU) -I.
@@ -34,8 +32,8 @@ $(TARGET).hex: $(TARGET).elf
 $(TARGET).elf: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< 
+%.o: %.c %.h 
+	$(CC) $(CFLAGS) -c $<
 
 build: $(TARGET).hex 
 
