@@ -1,6 +1,5 @@
 #ifndef _DISPLAY_H
 #define _DISPLAY_H
-#endif
 
 // sn74hc595 shift register
 #define HC595_PORT PORTD
@@ -25,6 +24,7 @@
 #define SEG_7 0x27
 #define SEG_8 0x7f
 #define SEG_9 0x6f
+#define SEG_E 0x79
 
 // mathod description
 void HC595Init();
@@ -33,3 +33,4 @@ void HC595Latch();
 void HC595Write(uint8_t);
 void SevenSegment(uint8_t);
 
+#endif
