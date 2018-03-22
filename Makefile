@@ -32,7 +32,7 @@ $(TARGET).hex: $(TARGET).elf
 $(TARGET).elf: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-%.o: %.c %.h 
+%.o: %.c 
 	$(CC) $(CFLAGS) -c $<
 
 build: $(TARGET).hex 
