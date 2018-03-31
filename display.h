@@ -1,6 +1,8 @@
 #ifndef _DISPLAY_H
 #define _DISPLAY_H
 
+#define DISPLAY_PORT PORTD
+#define DISPLAY_DDR  DDRD
 // display digit switch
 #define BUT_DIGIT0  PD3 // digit_0 switch
 #define BUT_DIGIT1  PD4 // digit_1 switch
@@ -8,16 +10,16 @@
 #define BUT_DIGIT3  PD6 // digit_3 switch
 
 // sn74hc595 shift register
-#define DISPLAY_PORT PORTD
-#define DISPLAY_DDR  DDRD
+#define SHIFT_PORT PORTC
+#define SHIFT_DDR  DDRC
 
-#define HC595_SER   PD0 // Serial data input
-#define HC595_RCLK  PD1 // Shift register clock
-#define HC595_SRCLK PD2 // Storage register clock
+#define HC595_SER   PC3 // Serial data input
+#define HC595_RCLK  PC2 // Shift register clock
+#define HC595_SRCLK PC1 // Storage register clock
 
 // Low level macros to change SER Line
-#define HC595DataHigh() (DISPLAY_PORT|=(1<<HC595_SER))
-#define HC595DataLow()  (DISPLAY_PORT&=(~(1<<HC595_SER)))
+#define HC595DataHigh() (SHIFT_PORT|=(1<<HC595_SER))
+#define HC595DataLow()  (SHIFT_PORT&=(~(1<<HC595_SER)))
 
 // define display num hex code
 #define SEG_0 0x3f 
