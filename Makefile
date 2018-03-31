@@ -19,8 +19,11 @@ TARGET = $(lastword $(subst /, ,$(CURDIR)))
 SOURCES = $(wildcard *.c $(LIBDIR)/*.c)
 OBJECTS = $(SOURCES:.c=.o)
 
+#include lib config
+LIB0 =.
+
 # compilation options
-CFLAGS = -std=c99 -Wall -g -Os -mmcu=$(MCU) -DF_CPU=$(F_CPU) -I.
+CFLAGS = -std=c99 -Wall -g -Os -mmcu=$(MCU) -DF_CPU=$(F_CPU) -I$(LIB0)
 
 .PHONY: build flash clean info dis_bootloader en_bootloader
 
