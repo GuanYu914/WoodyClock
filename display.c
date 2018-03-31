@@ -5,19 +5,19 @@
 void HC595Init()
 {
    //make the SER, SRCLK, RCLK lines as output
-   DISPLAY_DDR|=((1<<HC595_SRCLK)|(1<<HC595_RCLK)|(1<<HC595_SER));
+   SHIFT_DDR|=((1<<HC595_SRCLK)|(1<<HC595_RCLK)|(1<<HC595_SER));
 }
 
 void HC595Pulse()
 {
-   DISPLAY_PORT|=(1<<HC595_SRCLK);    // set SRCLK line as high
-   DISPLAY_PORT&=(~(1<<HC595_SRCLK)); // set SRCLK line as low
+   SHIFT_PORT|=(1<<HC595_SRCLK);    // set SRCLK line as high
+   SHIFT_PORT&=(~(1<<HC595_SRCLK)); // set SRCLK line as low
 }
 
 void HC595Latch()
 {
-   DISPLAY_PORT|=(1<<HC595_RCLK);    // set RCLK line as high
-   DISPLAY_PORT&=(~(1<<HC595_RCLK)); // set RCLK line as low
+   SHIFT_PORT|=(1<<HC595_RCLK);    // set RCLK line as high
+   SHIFT_PORT&=(~(1<<HC595_RCLK)); // set RCLK line as low
 }
 
 void HC595Write(uint8_t data)
@@ -44,8 +44,11 @@ void HC595Write(uint8_t data)
 }
 
 void SevenSegDisplay(uint8_t num)
-{
-	HC595Init();
+{	
+	if(num == 10)
+	{
+		HC595Write(SEG_E);
+	}
 	if(num == 9)
 	{
 		HC595Write(SEG_9);
@@ -66,7 +69,7 @@ void SevenSegDisplay(uint8_t num)
 	{
 		HC595Write(SEG_5);
 	}
-	if(num == 4)
+	if(num == 4)	
 	{
 		HC595Write(SEG_4);
 	}
