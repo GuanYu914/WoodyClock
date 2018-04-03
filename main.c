@@ -3,6 +3,7 @@
 #include <avr/interrupt.h>
 #include <display.h>
 #include <clock.h>
+#include <button.h>
 
 // force to initialize this array as volatile type
 volatile uint8_t digit[4];
@@ -23,9 +24,9 @@ void FourSevenSegDisplay(uint16_t num)
 	}
 }
 
-void TimerInit()
+void Timer0Init()
 {
-	// prescaler = FCPU / 256
+	// prescaler = FCPU / 64
 	TCCR0B|=(1<<CS02);
 	
 	// enable overflow interrupt enable
@@ -44,37 +45,47 @@ void TimerInit()
 int main(void)
 {
 	uint8_t Temp_min = 0, Temp_hour = 0, Temp_temp = 0;
-
-	// SetHour(23);
-	// SetMinute(7);
-	// SetSecond(10);
+	uint8_t mode = 0;
 	HC595Init();	
-	TimerInit();
+	Timer0Init();
 	ClockInit();
+	ButtonInit();
+	
+	//SetHour(18);
+	//SetMinute(11);
+	//SetSecond(0);
 	
 	while(1)
-	{			
-		Temp_min = GetMinute();
-		Temp_hour = GetHour();
-		digit[0] = Temp_min%10;
-		digit[1] = Temp_min/10;
-		digit[2] = Temp_hour%10;
-		digit[3] = Temp_hour/10;
-		_delay_ms(5000);
-		Temp_temp = GetTemp();
-		digit[0] = Temp_temp%10;
-		digit[1] = Temp_temp/10;
-		digit[2] = 0;
-		digit[3] = 0;	
-		_delay_ms(5000);
-	}
+	{
+		if(ButtonDebounce())
+		{
+			mode ^= (1<<1);		
+		}
+		if(mode)
+		{	
+			Temp_temp = GetTemp();
+			digit[2] = Temp_temp%10;
+			digit[3] = Temp_temp/10;
+			digit[1] = 'o';
+			digit[0] = 'c';	
+		}else
+		{
+			Temp_min = GetMinute();
+			Temp_hour = GetHour();
+			digit[0] = Temp_min%10;
+			digit[1] = Temp_min/10;
+			digit[2] = Temp_hour%10;
+			digit[3] = Temp_hour/10;
+		}
+	}	
 	return 0;
 }
 
 ISR(TIMER0_OVF_vect)
 {
-	static uint8_t i = 0;
 	
+	static uint8_t i = 0;
+		
 	if(i == 3)
 	{
 		i = 0;
@@ -83,12 +94,11 @@ ISR(TIMER0_OVF_vect)
 		i++;
 	}
 	
-	// turn off all digit switch
 	DISPLAY_PORT&=(~(1<<BUT_DIGIT3));
-	DISPLAY_PORT&=(~(1<<BUT_DIGIT2));
-	DISPLAY_PORT&=(~(1<<BUT_DIGIT1));
+	DISPLAY_PORT&=(~(1<<BUT_DIGIT2));	
 	DISPLAY_PORT&=(~(1<<BUT_DIGIT0));
-
+	DISPLAY_PORT&=(~(1<<BUT_DIGIT1));		
+	
 	if(i == 3)
 	{
 		DISPLAY_PORT|=(1<<BUT_DIGIT3);
@@ -104,7 +114,6 @@ ISR(TIMER0_OVF_vect)
 	if(i == 0)
 	{
 		DISPLAY_PORT|=(1<<BUT_DIGIT0);
-	}
-	SevenSegDisplay(digit[i]);
+	}	
+	SevenSegDisplay(digit[i]);		
 }
-
