@@ -43,8 +43,23 @@ void HC595Write(uint8_t data)
    HC595Latch();
 }
 
+void TimeBlinkDisplay()
+{
+	HC595Write(SEG_DP);
+}
+
 void SevenSegDisplay(uint8_t num)
-{	
+{
+	// special display characters for temperture
+	if(num == 'o')
+	{
+		HC595Write(0x63);
+	}	
+	if(num == 'c')
+	{
+		HC595Write(0x39);
+	}
+	// display characters for number
 	if(num == 10)
 	{
 		HC595Write(SEG_E);
