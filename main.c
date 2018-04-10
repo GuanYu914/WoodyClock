@@ -7,6 +7,8 @@
 
 // force to initialize this array as volatile type
 volatile uint8_t digit[4];
+volatile uint8_t mode = 0;
+volatile uint8_t scanFreq = 0;
 
 // process seperate digit number value
 void FourSevenSegDisplay(uint16_t num)
@@ -26,14 +28,23 @@ void FourSevenSegDisplay(uint16_t num)
 
 void Timer0Init()
 {
+	TCCR0B |= (1<<CS02);
+	TIMSK0 |= (1<<TOIE0);
+	TCNT0 = 0;
+	sei();
+}
+
+void Timer2Init()
+{
+	scanFreq = 0;
 	// prescaler = FCPU / 64
-	TCCR0B|=(1<<CS02);
+	TCCR2B|=(1<<CS20) | (1<<CS21);
 	
 	// enable overflow interrupt enable
-	TIMSK0|=(1<<TOIE0);
+	TIMSK2|=(1<<TOIE2);
 
 	// initialize counter
-	TCNT0 = 0;
+	TCNT2 = 0;
 	
 	// assigh all digit switch as output
 	DISPLAY_DDR|=(1<<BUT_DIGIT0) | (1<<BUT_DIGIT1) | (1<<BUT_DIGIT2) | (1<<BUT_DIGIT3);
@@ -44,32 +55,26 @@ void Timer0Init()
 
 int main(void)
 {
-	uint8_t Temp_min = 0, Temp_hour = 0, Temp_temp = 0;
-	uint8_t mode = 0;
+	uint8_t Temp_min = 0, Temp_hour = 0, Temp_temp = 0, Temp_month = 0, Temp_date = 0;
+	//uint8_t mode = 0;
+	uint16_t Temp_year = 0;
+
 	HC595Init();	
 	Timer0Init();
+	Timer2Init();
 	ClockInit();
 	ButtonInit();
-	
+
+	//SetYear(2018);
+	//SetMonth(4);
+	//SetDate(10);	
 	//SetHour(18);
-	//SetMinute(11);
+	//SetMinute(10);
 	//SetSecond(0);
-	
 	while(1)
 	{
-		if(ButtonDebounce())
-		{
-			mode ^= (1<<1);		
-		}
-		if(mode)
+		if(mode == 0)
 		{	
-			Temp_temp = GetTemp();
-			digit[2] = Temp_temp%10;
-			digit[3] = Temp_temp/10;
-			digit[1] = 'o';
-			digit[0] = 'c';	
-		}else
-		{
 			Temp_min = GetMinute();
 			Temp_hour = GetHour();
 			digit[0] = Temp_min%10;
@@ -77,43 +82,92 @@ int main(void)
 			digit[2] = Temp_hour%10;
 			digit[3] = Temp_hour/10;
 		}
+		
+		if(mode == 1)
+		{
+			Temp_year = GetYear();
+			digit[3] = Temp_year /1000;
+			Temp_year %= 1000;
+			digit[2] = Temp_year / 100;
+			Temp_year %= 100;
+			digit[1] = Temp_year / 10;
+			Temp_year %= 10;
+			digit[0] = Temp_year;
+			_delay_ms(1000);
+			Temp_date = GetDate();
+			digit[0] = Temp_date % 10;
+			digit[1] = Temp_date / 10;
+			Temp_month = GetMonth();
+			digit[2] = Temp_month % 10;
+			digit[3] = Temp_month / 10;
+			_delay_ms(1000);
+		}
+		
+		if(mode == 2)
+		{
+			Temp_temp = GetTemp();
+			digit[3] = Temp_temp/10;
+			digit[2] = Temp_temp%10;
+			digit[1] = 'o';
+			digit[0] = 'c';	
+		}
 	}	
 	return 0;
 }
 
-ISR(TIMER0_OVF_vect)
+ISR(TIMER2_OVF_vect)
 {
-	
 	static uint8_t i = 0;
+	scanFreq++;
+	if(scanFreq >= 10)
+	{
+		scanFreq = 0;	
+		//static uint8_t i = 0;
 		
-	if(i == 3)
-	{
-		i = 0;
-	}else
-	{
-		i++;
-	}
+		if(i == 3)
+		{
+			i = 0;
+		}else
+		{
+			i++;
+		}
 	
-	DISPLAY_PORT&=(~(1<<BUT_DIGIT3));
-	DISPLAY_PORT&=(~(1<<BUT_DIGIT2));	
-	DISPLAY_PORT&=(~(1<<BUT_DIGIT0));
-	DISPLAY_PORT&=(~(1<<BUT_DIGIT1));		
+		DISPLAY_PORT&=(~(1<<BUT_DIGIT3));
+		DISPLAY_PORT&=(~(1<<BUT_DIGIT2));	
+		DISPLAY_PORT&=(~(1<<BUT_DIGIT0));
+		DISPLAY_PORT&=(~(1<<BUT_DIGIT1));		
 	
-	if(i == 3)
-	{
-		DISPLAY_PORT|=(1<<BUT_DIGIT3);
+		if(i == 3)
+		{
+			DISPLAY_PORT|=(1<<BUT_DIGIT3);
+		}
+		if(i == 2)
+		{
+			DISPLAY_PORT|=(1<<BUT_DIGIT2);
+		}
+		if(i == 1)
+		{
+			DISPLAY_PORT|=(1<<BUT_DIGIT1);
+		}
+		if(i == 0)
+		{
+			DISPLAY_PORT|=(1<<BUT_DIGIT0);
+		}	
+		SevenSegDisplay(digit[i]);		
 	}
-	if(i == 2)
-	{
-		DISPLAY_PORT|=(1<<BUT_DIGIT2);
-	}
-	if(i == 1)
-	{
-		DISPLAY_PORT|=(1<<BUT_DIGIT1);
-	}
-	if(i == 0)
-	{
-		DISPLAY_PORT|=(1<<BUT_DIGIT0);
-	}	
-	SevenSegDisplay(digit[i]);		
 }
+
+ISR(TIMER0_OVF_vect)
+{	
+	if(ButtonDebounce())
+	{
+		if(mode == 2)
+		{
+			mode = 0;
+		}else
+		{
+			mode++;
+		}
+	}
+}
+
