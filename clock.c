@@ -20,6 +20,33 @@ uint8_t ClockInit()
 	return 1;
 }
 
+uint8_t GetDate()
+{
+	uint8_t date, temp;
+	DS3231Read(0x04, &temp);
+	date = (((temp & 0b00110000)>>4)*10) + (temp & 0b00001111);	
+	return date;
+}
+
+uint8_t GetMonth()
+{
+	uint8_t month, temp;
+	DS3231Read(0x05, &temp);
+	month = (((temp & 0b00110000)>>4)*10) + (temp & 0b00001111);
+	return month;
+}
+
+uint16_t GetYear()
+{
+	uint8_t year;
+	uint8_t temp;
+	uint16_t u16year;
+	DS3231Read(0x06, &temp);
+	year = (((temp & 0b11110000)>>4)*10) + (temp & 0b00001111);
+	u16year = year + CURRENT_YEAR;
+	return  u16year;
+}
+
 uint8_t GetSecond()
 {
 	uint8_t sec,temp;
@@ -71,6 +98,34 @@ uint8_t GetTemp()
 	}
 	return temp;
 }
+
+uint8_t SetDate(uint8_t date)
+{
+	uint8_t temp, result;
+	temp = ((date / 10)<<4) | (date % 10);
+	result = DS3231Write(0x04, temp);
+	return result;
+}
+
+uint8_t SetMonth(uint8_t month)
+{
+	uint8_t temp, result;
+	temp = ((month / 10)<<4) | (month % 10);
+	result = DS3231Write(0x05, temp);
+	return result;
+}
+
+uint8_t SetYear(uint16_t year)
+{
+	uint8_t temp, result;
+	year -= CURRENT_YEAR;
+	uint8_t u8year;
+	u8year = (uint8_t)year;
+	temp = ((u8year / 10)<<4) | (u8year % 10);
+	result = DS3231Write(0x06, temp);
+	return result;
+}
+
 uint8_t SetSecond(uint8_t sec)
 {
 	uint8_t temp,result;
