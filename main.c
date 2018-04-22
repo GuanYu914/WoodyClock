@@ -6,11 +6,14 @@
 #include <button.h>
 
 // force to initialize this array as volatile type
-volatile uint8_t digit[4];
+volatile uint8_t digit[5];
 volatile uint8_t mode = 0;
 volatile uint8_t scanFreq = 0;
+volatile uint16_t timeFreq = 0; 
 
 // process seperate digit number value
+// uncomment this function uintil using for special situation 
+/*
 void FourSevenSegDisplay(uint16_t num)
 {
 	uint8_t i = 0, j = 0;
@@ -25,19 +28,12 @@ void FourSevenSegDisplay(uint16_t num)
 		digit[j] = 0;
 	}
 }
-
-void Timer0Init()
-{
-	TCCR0B |= (1<<CS02);
-	TIMSK0 |= (1<<TOIE0);
-	TCNT0 = 0;
-	sei();
-}
+*/
 
 void Timer2Init()
 {
 	scanFreq = 0;
-	// prescaler = FCPU / 64
+	// prescaler = FCPU / 32
 	TCCR2B|=(1<<CS20) | (1<<CS21);
 	
 	// enable overflow interrupt enable
@@ -47,30 +43,34 @@ void Timer2Init()
 	TCNT2 = 0;
 	
 	// assigh all digit switch as output
-	DISPLAY_DDR|=(1<<BUT_DIGIT0) | (1<<BUT_DIGIT1) | (1<<BUT_DIGIT2) | (1<<BUT_DIGIT3);
+	DISPLAY_DDR|=(1<<BUT_DIGIT0) | (1<<BUT_DIGIT1) | (1<<BUT_DIGIT2) | (1<<BUT_DIGIT3)| (1<<BUT_DIGIT4);
 	
 	// enable global interrupt
 	sei();
 }
 
+void ClockGlobalSet(uint16_t year, uint8_t month, uint8_t date, uint8_t hr, uint8_t min, uint8_t sec)
+{
+	SetYear(year);
+	SetMonth(month);
+	SetDate(date);
+	SetHour(hr);
+	SetMinute(min);
+	SetSecond(sec);
+}
+
 int main(void)
 {
 	uint8_t Temp_min = 0, Temp_hour = 0, Temp_temp = 0, Temp_month = 0, Temp_date = 0;
-	//uint8_t mode = 0;
 	uint16_t Temp_year = 0;
 
 	HC595Init();	
-	Timer0Init();
 	Timer2Init();
 	ClockInit();
 	ButtonInit();
 
-	//SetYear(2018);
-	//SetMonth(4);
-	//SetDate(10);	
-	//SetHour(18);
-	//SetMinute(10);
-	//SetSecond(0);
+	//ClockGlobalSet(2018, 4, 22, 14, 30, 0);
+	
 	while(1)
 	{
 		if(mode == 0)
@@ -81,6 +81,7 @@ int main(void)
 			digit[1] = Temp_min/10;
 			digit[2] = Temp_hour%10;
 			digit[3] = Temp_hour/10;
+			digit[4] = ':';
 		}
 		
 		if(mode == 1)
@@ -111,20 +112,30 @@ int main(void)
 			digit[1] = 'o';
 			digit[0] = 'c';	
 		}
-	}	
+	}
 	return 0;
 }
 
 ISR(TIMER2_OVF_vect)
 {
 	static uint8_t i = 0;
+	if(ButtonDebounce())
+	{
+		if(mode == 2)
+		{
+			mode = 0;
+		}else
+		{
+			mode++;
+		}
+	}
+
 	scanFreq++;
-	if(scanFreq >= 10)
+	if(scanFreq >= 6)
 	{
 		scanFreq = 0;	
-		//static uint8_t i = 0;
 		
-		if(i == 3)
+		if(i == 4)
 		{
 			i = 0;
 		}else
@@ -136,7 +147,22 @@ ISR(TIMER2_OVF_vect)
 		DISPLAY_PORT&=(~(1<<BUT_DIGIT2));	
 		DISPLAY_PORT&=(~(1<<BUT_DIGIT0));
 		DISPLAY_PORT&=(~(1<<BUT_DIGIT1));		
-	
+
+		if(i == 4)
+		{
+			if(mode == 0)
+			{
+				timeFreq++;
+				if(timeFreq >= 67)
+				{
+					DISPLAY_PORT^=(1<<BUT_DIGIT4);
+					timeFreq = 0;
+				}			
+			}else
+			{
+					DISPLAY_PORT&=(~(1<<BUT_DIGIT4));
+			}
+		}	
 		if(i == 3)
 		{
 			DISPLAY_PORT|=(1<<BUT_DIGIT3);
@@ -154,20 +180,6 @@ ISR(TIMER2_OVF_vect)
 			DISPLAY_PORT|=(1<<BUT_DIGIT0);
 		}	
 		SevenSegDisplay(digit[i]);		
-	}
-}
-
-ISR(TIMER0_OVF_vect)
-{	
-	if(ButtonDebounce())
-	{
-		if(mode == 2)
-		{
-			mode = 0;
-		}else
-		{
-			mode++;
-		}
 	}
 }
 
