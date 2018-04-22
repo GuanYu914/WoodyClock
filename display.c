@@ -23,7 +23,7 @@ void HC595Latch()
 void HC595Write(uint8_t data)
 {
    // send each 8 bits serially
-	HC595DataHigh();
+   HC595DataHigh();
    //order is MSB first
    for(uint8_t i=0;i<8;i++)
    {
@@ -43,21 +43,20 @@ void HC595Write(uint8_t data)
    HC595Latch();
 }
 
-void TimeBlinkDisplay()
-{
-	HC595Write(SEG_DP);
-}
-
 void SevenSegDisplay(uint8_t num)
 {
+	if(num == ':')
+	{
+		HC595Write(SEG_Colon);
+	}
 	// special display characters for temperture
 	if(num == 'o')
 	{
-		HC595Write(0x63);
+		HC595Write(SEG_O);
 	}	
 	if(num == 'c')
 	{
-		HC595Write(0x39);
+		HC595Write(SEG_C);
 	}
 	// display characters for number
 	if(num == 10)
