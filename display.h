@@ -8,6 +8,7 @@
 #define BUT_DIGIT1  PD4 // digit_1 switch
 #define BUT_DIGIT2  PD5 // digit_2 switch 
 #define BUT_DIGIT3  PD6 // digit_3 switch
+#define BUT_DIGIT4  PD7 // time switch
 
 // sn74hc595 shift register
 #define SHIFT_PORT PORTC
@@ -34,11 +35,17 @@
 #define SEG_9 0X6f
 #define SEG_E 0x79
 
+// define special characters
+#define SEG_Colon 0x80 // : display character
+#define SEG_O     0x63 // o display character
+#define SEG_C     0x39 // c display character
+
 // mathod description
 void HC595Init();
 void HC595Pulse();
 void HC595Latch();
 void HC595Write(uint8_t);
 void SevenSegDisplay(uint8_t);
+void TimeBlinkDisplay();
 
 #endif
