@@ -21,7 +21,7 @@ uint8_t ButtonDebounce()
 	if(current_state != button_state)
 	{
 		count++;
-		if(count >= 4)
+		if(count >= 5)
 		{
 			// assign current_state into button_state
 			button_state = current_state;
