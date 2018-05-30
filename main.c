@@ -9,6 +9,7 @@
 volatile uint8_t digit[5];
 volatile uint8_t mode = 0;
 volatile uint8_t scanFreq = 0;
+volatile uint8_t butFreq = 0;
 volatile uint16_t timeFreq = 0; 
 
 // process seperate digit number value
@@ -59,6 +60,7 @@ void ClockGlobalSet(uint16_t year, uint8_t month, uint8_t date, uint8_t hr, uint
 	SetSecond(sec);
 }
 
+
 int main(void)
 {
 	uint8_t Temp_min = 0, Temp_hour = 0, Temp_temp = 0, Temp_month = 0, Temp_date = 0;
@@ -69,7 +71,7 @@ int main(void)
 	ClockInit();
 	ButtonInit();
 
-	//ClockGlobalSet(2018, 4, 22, 14, 30, 0);
+	//ClockGlobalSet(2018, 5, 30, 22, 27, 0);
 	
 	while(1)
 	{
@@ -119,17 +121,22 @@ int main(void)
 ISR(TIMER2_OVF_vect)
 {
 	static uint8_t i = 0;
-	if(ButtonDebounce())
+		
+	butFreq++;
+	if(butFreq > 5)
 	{
-		if(mode == 2)
+		butFreq = 0;
+		if(ButtonDebounce())
 		{
-			mode = 0;
-		}else
-		{
-			mode++;
+			if(mode == 2)
+			{
+				mode = 0;
+			}else
+			{
+				mode++;
+			}
 		}
 	}
-
 	scanFreq++;
 	if(scanFreq >= 6)
 	{
@@ -182,4 +189,3 @@ ISR(TIMER2_OVF_vect)
 		SevenSegDisplay(digit[i]);		
 	}
 }
-
