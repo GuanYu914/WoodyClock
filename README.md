@@ -5,6 +5,10 @@ This is digital clock with avr microconcroller, it provides 3 modes to check tim
 pressing push button, the information of modes will show on the 7 segment display. Another feature is charging, it can power
 with Li battery, at least maintain the power for 3 days. 
 
+## Development Environment
+
+The design of whole PCB is under Kicad 4.0.7, and the source code is under debian linux. You can extract rar which locate in pcb directory, then open this project with Kicad IDE.
+
 ## Display Preview
 
 ### Time Information
