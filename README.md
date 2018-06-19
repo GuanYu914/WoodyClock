@@ -8,6 +8,11 @@ with Li battery, at least maintain the power for 3 days.
 ## Development Environment
 
 The design of whole PCB is under Kicad 4.0.7, and the source code is under debian linux. You can extract rar which locate in pcb directory, then open this project with Kicad IDE.
+<p>You can use below instruction to setup AVR-GCC ToolChain</p>
+<pre><code>sudo apt-get update<br>
+sudo apt-get upgrade<br>
+sudo apt-get install gcc-avr binutils-avr gdb-avr avr-libc avrdude<br>
+</pre></code>
 
 ## Display Preview
 
