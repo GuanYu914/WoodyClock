@@ -37,6 +37,13 @@ Uses degrees Celsius
 ## How to set clock time and date manually.
 
 ### Step 1
+Remove the module, which surround with the red area, and connect USBASP programmer to ICSP pins. If you don't have USBASP
+programmer, buy it online. It doesn't very expensive to get.<br>
+<img src="https://github.com/GuanYu914/WoodyClock/blob/master/photos/BeforeProg.jpg" width="50%" height="50%"><br>
+If board is like this, you are ready to program it.<br>
+<img src="https://github.com/GuanYu914/WoodyClock/blob/master/photos/AfterProg.JPG" width="50%" height="50%"><br>
+
+### Step 2
 <p>Download this repository.<br>
 Move into "src" directory.<br>
 Edit "main.c" source code.<br>
@@ -46,19 +53,19 @@ cd src<br>
 vim main.c<br>
 </code></pre>
 
-### Step 2
+### Step 3
 Uncomment this fuction.
 <br><img src="https://github.com/GuanYu914/WoodyClock/blob/master/photos/function.PNG" width="50%" height="50%"><br>
 This statement will set year to 2018/6/11, set time to 15:8.<br>
 You can modifly function parameter to adjust time correctly.
 
-### Step 3
+### Step 4
 <p>Compile and upload code.<br>
 Move into "src" directory.<br>
 Type "make flash".<br></p>
 <pre><code>make flash
 </code></pre>
 
-### Step 4
+### Step 5
 <p>Don't forget to comment this function, then upload again.<br>
 <img src="https://github.com/GuanYu914/WoodyClock/blob/master/photos/function.PNG" width="50%" height="50%"><br></P>
