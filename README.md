@@ -1,6 +1,6 @@
 # WoodyClock
 
-## Introduce
+## Introduction
 This is digital clock with avr microconcroller, it provides 3 modes to check time, date and tmeperature. To change mode by 
 pressing push button, the information of modes will show on the 7 segment display. Another feature is charging, it can power
 with Li battery, at least maintain the power for 3 days. 
@@ -14,24 +14,24 @@ sudo apt-get upgrade<br>
 sudo apt-get install gcc-avr binutils-avr gdb-avr avr-libc avrdude<br>
 </pre></code>
 
-## Display Preview
+## Preview Display
 
-### Time Information
+### Information of Time
 Uses 24 hour for displaying.
 
 <img src="https://github.com/GuanYu914/WoodyClock/blob/master/photos/Time.JPG" width="50%" height="50%">
 
-### Date Information
+### Information of Date
 Uses cross-displaying.
 
 <img src="https://github.com/GuanYu914/WoodyClock/blob/master/photos/Date.gif" width="50%" height="50%">
 
-### Temperature Information
+### Information of Temperature
 Uses degrees Celsius 
 
 <img src="https://github.com/GuanYu914/WoodyClock/blob/master/photos/Temp.JPG" width="50%" height="50%">
 
-## PCB Layout 
+## Layout of PCB 
 <img src="https://github.com/GuanYu914/WoodyClock/blob/master/photos/PCB.JPG" width="50%" height="50%">
 
 ## How to set clock time and date manually.
