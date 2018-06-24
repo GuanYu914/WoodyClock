@@ -37,7 +37,7 @@ Uses degrees Celsius
 ## How to set clock time and date manually.
 
 ### Step 1
-Remove the module, which surround with the red area, and connect USBASP programmer to ICSP pins. If you don't have USBASP
+Remove the module, which be surrounded with the red area, and connect USBASP programmer to ICSP pins. If you don't have USBASP
 programmer, buy it online. It doesn't very expensive to get.<br>
 <img src="https://github.com/GuanYu914/WoodyClock/blob/master/photos/BeforeProg.jpg" width="50%" height="50%"><br>
 If board is like this, you are ready to program it.<br>
