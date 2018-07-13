@@ -1,7 +1,7 @@
 # WoodyClock
 
 ## Introduction
-This is digital clock with avr microconcroller, it provides 3 modes to check time, date and tmeperature. To change mode by 
+This is digital clock with avr microcontroller, it provides 3 modes to check time, date and tmeperature. To change mode by 
 pressing push button, the information of modes will show on the 7 segment display. Another feature is charging, it can power
 with Li battery, at least maintain the power for 3 days. 
 
