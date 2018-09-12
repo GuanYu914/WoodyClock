@@ -38,6 +38,7 @@
 // define special characters
 #define SEG_Colon 0x80 // : display character
 #define SEG_O     0x63 // o display character
+#define SEG_LOGO  0x5c // logo display character
 #define SEG_C     0x39 // c display character
 
 // mathod description
