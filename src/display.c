@@ -45,6 +45,11 @@ void HC595Write(uint8_t data)
 
 void SevenSegDisplay(uint8_t num)
 {
+	// initial logo 'o' character
+	if(num == 's')
+	{
+		HC595Write(SEG_LOGO);
+	}
 	if(num == ':')
 	{
 		HC595Write(SEG_Colon);
