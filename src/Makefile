@@ -1,14 +1,19 @@
+# define the target of microcontroller and frequency
 MCU   = atmega328p
 # UL -> unsigned long
 F_CPU = 16000000UL 
 
-PROGRAMMER_TYPE = usbasp
-
 # program for building
+# avr-gcc     -> gcc for avr
+# avr-objcopy -> copy and translate object files
+# avr-objdump -> display information from object files
+# avrdude     -> avr flash software
+# usbasp      -> avr flash hardware
+
+#OBJDUMP = avr-objdump
+#AVRSIZE = avr-size
 CC = avr-gcc
 OBJCOPY = avr-objcopy
-OBJDUMP = avr-objdump
-AVRSIZE = avr-size
 AVRDUDE = avrdude
 PROGRAMMER = usbasp
 
@@ -23,12 +28,20 @@ OBJECTS = $(SOURCES:.c=.o)
 LIB0 =.
 
 # compilation options
+# -std    -> select the language standard
+# -Wall   -> enable all the warnings about construction
+# -g      -> enable debug
+# -Os     -> optimize for size
+# -mmcu   -> specify ATMEL avr instructionset or MCU type
+# -DF_CPU -> predefine F_CPU as macro name
+# -I      -> add the directory to list of directories to be searched for header files
 CFLAGS = -std=c99 -Wall -g -Os -mmcu=$(MCU) -DF_CPU=$(F_CPU) -I$(LIB0)
 
 .PHONY: build flash clean info dis_bootloader en_bootloader
 
 all: build flash
 
+# cpoy .text and .data area to produce hex file
 $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -j .text -j .data -O ihex $^ $@
 
