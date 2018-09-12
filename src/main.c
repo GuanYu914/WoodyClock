@@ -71,7 +71,14 @@ int main(void)
 	ClockInit();
 	ButtonInit();
 
-	//ClockGlobalSet(2018, 5, 30, 22, 27, 0);
+	//Print initial logo before start to work
+	digit[0] = 's';
+	digit[1] = 's';
+	digit[2] = 's';
+	digit[3] = 's';	
+	_delay_ms(2000);
+	
+	//ClockGlobalSet(2018, 6, 26, 14, 33, 0);
 	
 	while(1)
 	{
